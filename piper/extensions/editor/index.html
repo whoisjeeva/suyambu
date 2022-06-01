@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+    <button id="run">Run</button>
+
+    <div id="blockly-div"></div>
+    <div id="code" style="display: none;"></div>
+
+    <div class="overlay"></div>
+    <div class="dialog element-selector-dialog">
+        <div class="content">Waiting for elements...</div>
+        <div class="btns">
+            <button class="cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        /* Configs */
+        window.isExtension = true;
+        localStorage.setItem('isDark', true);
+    </script>
+    <script src="dist/bundle.min.js"></script>
+    <script src="dist/editor.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

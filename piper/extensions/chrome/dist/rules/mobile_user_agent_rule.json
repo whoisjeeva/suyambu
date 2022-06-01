@@ -1,0 +1,13 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "action": { 
+            "type": "modifyHeaders",
+            "requestHeaders": [
+                { "header": "user-agent", "operation": "set", "value": "Mozilla/5.0 (Linux; Android 11; Piper Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36" }
+            ]
+        },
+        "condition": {"urlFilter": "|http*", "resourceTypes": ["main_frame"] }
+    }
+]

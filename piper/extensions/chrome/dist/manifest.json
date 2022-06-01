@@ -1,0 +1,65 @@
+{
+	"manifest_version": 3,
+	"name": "Piper",
+	"version": "1.0.1",
+	"permissions": [
+		"storage",
+		"notifications",
+		"tabs",
+		"scripting",
+		"downloads",
+		"declarativeNetRequest",
+		"debugger"
+	],
+	"declarative_net_request" : {
+		"rule_resources": [
+			{
+				"id": "mobile_user_agent_rule",
+				"enabled": false,
+				"path": "rules/mobile_user_agent_rule.json"
+			},
+			{
+				"id": "desktop_user_agent_rule",
+				"enabled": false,
+				"path": "rules/desktop_user_agent_rule.json"
+			}
+		]
+	},
+	"host_permissions": [
+		"<all_urls>"
+	],
+	"action": {
+		"default_icon": {
+			"16": "icons/16.png",
+			"48": "icons/48.png",
+			"128": "icons/128.png"
+		},
+		"default_title": "Piper",
+		"default_popup": "popup.html"
+	},
+	"description": "A plain text description",
+	"icons": {
+		"16": "icons/16.png",
+		"48": "icons/48.png",
+		"128": "icons/128.png"
+	},
+	"author": "Jeeva",
+	"background": {
+		"service_worker": "worker.min.js"
+	},
+	"content_scripts": [
+		{
+			"matches": ["http://localhost/*"],
+			"js": ["content_script.js"],
+			"run_at": "document_idle"
+		},
+		{
+			"matches": ["http://*/*"],
+			"js": ["unfocus.js"],
+			"run_at": "document_start"
+		}
+	],
+	"externally_connectable": {
+		"matches": ["http://localhost/*"]
+	}
+}

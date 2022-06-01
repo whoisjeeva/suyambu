@@ -1,0 +1,40 @@
+[
+    {
+        "op": "set_variable",
+        "name": "x",
+        "pointer": { "value": 1, "type": "int" }
+    },
+    {
+        "op": "set_variable",
+        "name": "x",
+        "pointer": { "value": 2, "type": "int" }
+    },
+    {
+        "op": "set_variable",
+        "name": "y",
+        "pointer": {
+            "value": [{"value": "7", "type": "int"}, {"value": "5", "type": "int"}],
+            "type": "list"
+        }
+    },
+    {
+        "op": "get_variable",
+        "name": "x"
+    },
+    {
+        "op": "from_list_get_item",
+        "index": 0,
+        "pointer": { "op": "get_variable", "name": "y" }
+    },
+    {
+        "op": "print",
+        "pointer": {
+            "op": "from_list_get_item",
+            "index": 0,
+            "pointer": {
+                "value": [{"value": "7", "type": "int"}, {"value": "5", "type": "int"}],
+                "type": "list"
+            }
+        }
+    }
+]
