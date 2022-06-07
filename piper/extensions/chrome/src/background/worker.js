@@ -1,35 +1,18 @@
 import { Browser } from "./browser"
-import { sleep } from "../engine/util"
 import { Piper } from "../engine/piper"
 
 
+const CONFIG = {
+    isElementSelection: false,
+}
 
-async function runScript(code) {
-    // console.log(message.code)
 
+async function runScript(incomming) {
     // let browser = await new Window({ incognito: true, state: "minimized", width: 320 }).init(false)
-    let browser = await new Browser({ incognito: false, state: "normal" }).init(false)
-    // await window.newTab()
-    // await window.loadUrl("http://youtube.com")
-    
-    // await window.loadingWait()
-
-    // let tabs = await window.allTabs()
-    // await window.switchTab(0)
-    // await window.loadUrl('http://www.google.com')
-
-    // await window.loadingWait()
-
-    // let result = await window.executeScript(e => {
-    //     alert("Hello from the background script!")
-    //     return "Hello from the background script!"
-    // })
-
-    // window.close()
-
+    let browser = await new Browser({ incognito: incomming.incognito || false, state: incomming.state || "normal" }).init(false)
     let piper = new Piper(browser)
     try {
-        await piper.init(code)
+        await piper.init(incomming.code)
     } catch(e) {
         console.log("Error:", e)
     }
@@ -37,6 +20,7 @@ async function runScript(code) {
 }
 
 function switchToHome() {
+    CONFIG.isElementSelection = false
     chrome.action.setIcon({ 
         path: {
             "16": "icons/16.png",
@@ -50,6 +34,7 @@ function switchToHome() {
 
 
 function switchToElementSelection() {
+    CONFIG.isElementSelection = true
     chrome.action.setIcon({ path: "icons/record.png" })
     chrome.storage.sync.set({ page: "html_elements" })
 
@@ -73,6 +58,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 switchToHome()
             })
             break
+        case "open_piper":
+            chrome.tabs.create({ active: true, url: "https://suyambu.net/piper" })
     }
     return true
 })
@@ -88,12 +75,10 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
             switchToHome()
             break
         case "start":
-            runScript(message.code)
+            runScript(message)
             break
     }
 
     sendResponse({ message: "OK" })
     return true
 })
-
-

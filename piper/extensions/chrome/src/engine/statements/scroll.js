@@ -17,7 +17,10 @@ export default async function(statement, onError) {
             await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: () => {
-                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+                    let body = document.body
+                    let html = document.documentElement
+                    let height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight )
+                    window.scrollTo({ top: height, behavior: 'smooth' })
                 },
                 world: "MAIN"
             })

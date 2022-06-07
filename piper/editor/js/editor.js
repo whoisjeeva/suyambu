@@ -56,7 +56,7 @@ function getTheme() {
 
 
 window.workspace = Blockly.inject('blockly-div', {
-    media: 'media/',
+    media: '/piper/static/media/',
     toolbox: BLOCKLY_TOOLBOX_XML['standard'],
     zoom: {controls: true},
     move: {
@@ -96,20 +96,20 @@ Blockly.JavaScript.workspaceToCode = function(workspace) {
     return code
 }
 
-setTimeout(() => {
-    try {
-        window.Gumify.stack = JSON.parse(localStorage.getItem("variableStack"))
-    } catch(e) {
-        window.Gumify.stack = {}
-    }
+// setTimeout(() => {
+//     try {
+//         window.Gumify.stack = JSON.parse(localStorage.getItem("variableStack"))
+//     } catch(e) {
+//         window.Gumify.stack = {}
+//     }
 
-    try {
-        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(localStorage.getItem("xml")), workspace)
-        if (!window.isExtension) {
-            localStorage.setItem("xml", null)
-        }
-    } catch(e) {}
-}, 500)
+//     try {
+//         Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(localStorage.getItem("xml")), workspace)
+//         if (!window.isExtension) {
+//             localStorage.setItem("xml", null)
+//         }
+//     } catch(e) {}
+// }, 500)
 
 let isToolbarToggleVisible = localStorage.getItem("isToolbarToggleVisible") === "true"
 workspace.addChangeListener(function(e) {
@@ -119,7 +119,6 @@ workspace.addChangeListener(function(e) {
 
     if (e.element === "dragStop" || e.element === "dragStart") {
         updateToolbarIconsColor()
-        window.saveWorkspace()
     }
 
     if (e.element === "selected" && e.group === "" && e.oldValue !== null && e.newValue !== null) {

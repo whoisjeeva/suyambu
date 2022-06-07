@@ -1,4 +1,4 @@
-import { stringify } from "../util"
+import { stringify, sleep } from "../util"
 
 
 async function waitForElement(tabId, el, tries = 0) {
@@ -17,6 +17,7 @@ async function waitForElement(tabId, el, tries = 0) {
         return false
     }
     if (!els) {
+        await sleep(1000)
         return waitForElement.call(this, tabId, el, tries + 1)
     }
     return true
@@ -32,11 +33,11 @@ export default async function(statement, onError) {
 
         let op = pointer.op
         let tab = await this.browser.getCurrentTab()
-        
+
         for (let el of els) {
             let isFound = true
             if (op === "WAIT") {
-                isFound = waitForElement.call(this, tab.id, el)
+                isFound = await waitForElement.call(this, tab.id, el)
             }
             console.log("element: ", el)
             let xpath = el.attrs.xpath || "null"

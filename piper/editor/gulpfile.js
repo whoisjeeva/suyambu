@@ -20,7 +20,7 @@ const dirs = {
         "./libs1/blockly_compressed.js", 
         "./libs1/blocks_compressed.js", 
         "./libs1/javascript_compressed.js", 
-        "./libs1/gum.min.js", 
+        "./libs1/dom.min.js", 
         "./libs1/en.js"
     ],
     src: [

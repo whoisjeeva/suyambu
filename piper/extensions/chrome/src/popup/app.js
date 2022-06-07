@@ -7,6 +7,7 @@ chrome.storage.sync.get("page", data => {
     if (data.page === "html_elements") {
         new ElementSelectorPage("#app").render()
     } else {
-        new HomePage("#app").render()
+        // new HomePage("#app").render()
+        chrome.runtime.sendMessage({ event: "open_piper" })
     }
 })

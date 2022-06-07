@@ -82,9 +82,6 @@ import procedures_defnoreturn from "./statements/procedures_defnoreturn"
 import procedures_defreturn from "./statements/procedures_defreturn"
 
 
-import { sleep } from "./util"
-
-
 class Piper {
     constructor(browser) {
         this.browser = browser
@@ -106,18 +103,32 @@ class Piper {
     }
 
     async showError(statement, error) {
+        if (this.canShowErrorAlert) {
+            let tab = await this.browser.getCurrentTab()
+            await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: e => {
+                    return alert(e)
+                },
+                args: [String(error)],
+                world: "MAIN"
+            })
+        }
         this.isTerminated = true
     }
 
     async onScriptComplete() {
-        console.log("Completed")
+        let tab = await this.browser.getCurrentTab()
+        await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => {
+                return alert("Script execution completed.")
+            },
+            world: "MAIN"
+        })
     }
 
     async init(code) {
-        await sleep(500)
-        this.browser.loadUrl("file:///C:/Piper/index.html")
-        await sleep(500)
-        this.browser.loadUrl("file:///C:/Piper/index.html")
         let isSuccess = this.initFunctions(code)
         if (isSuccess) {
             await this.execute(code)

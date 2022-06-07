@@ -1,4 +1,4 @@
-import { stringify } from "../util"
+import { stringify, sleep } from "../util"
 
 
 
@@ -13,6 +13,7 @@ async function waitForElement(tabId, el) {
         world: "MAIN"
     })
     if (!foundEl[0].result) {
+        await sleep(1000)
         return waitForElement.call(this, tabId, el)
     }
     return true

@@ -1,4 +1,4 @@
-import { stringify } from "../util"
+import { stringify, sleep } from "../util"
 
 
 
@@ -18,6 +18,7 @@ async function waitForElement(tabId, el, tries = 0) {
         return false
     }
     if (!els) {
+        await sleep(1000)
         return waitForElement.call(this, tabId, el, tries + 1)
     }
     return true
