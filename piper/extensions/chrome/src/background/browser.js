@@ -4,21 +4,29 @@ class Browser {
     constructor(options) {
         this.options = options
         this.windowId = null
+        this.window = null
+        this.isWindowCreated = false
     }
 
     async init(useCurrent) {
-        let window = null
         if (useCurrent === undefined || useCurrent === null) {
             useCurrent = false
         }
+        this.window = await chrome.windows.getCurrent()
         if (useCurrent) {
-            window = await chrome.windows.getCurrent()
-        } else {
-            window = await chrome.windows.create(this.options)
+            this.options.useCurrent = true
         }
-
-        this.windowId = window.id
+        
+        this.windowId = this.window.id
         return this
+    }
+
+    async createNewWindow() {
+        if (!this.options.useCurrent && !this.isWindowCreated) {
+            this.window = await chrome.windows.create(this.options)
+            this.windowId = this.window.id
+            this.isWindowCreated = true
+        }
     }
 
     onClose(callback) {

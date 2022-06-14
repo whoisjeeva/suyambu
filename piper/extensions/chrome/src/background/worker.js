@@ -77,8 +77,12 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
         case "start":
             runScript(message)
             break
+        case "ping":
+            console.log("Wake up!")
+            break
     }
 
     sendResponse({ message: "OK" })
-    return true
+    // return true
 })
+

@@ -29,7 +29,7 @@ gulp.task("compile-desktop", function() {
 
 
 gulp.task("watch", gulp.series("compile", function() {
-    gulp.watch(["src/*.js", "src/**/*.js"], gulp.series("compile"))
+    gulp.watch(["src/*.js", "src/**/*.js"], gulp.series("compile", "compile-desktop"))
 }))
 
 gulp.task("default", gulp.series("compile", "compile-desktop"))

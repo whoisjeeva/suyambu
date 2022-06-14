@@ -315,6 +315,42 @@ BLOCKLY_TOOLBOX_XML['standard'] = `
         </block>
         <block type="lists_sort"></block>
     </category>
+
+    <category id="catDict" colour="#2C5D6F" name="Dict">
+        <block type="dict_create_with">
+            <mutation items="0"></mutation>
+        </block>
+        <block type="dict_create_with"></block>
+        <block type="dict_pair">
+            <value name="KEY">
+                <shadow type="text">
+                    <field name="TEXT">key</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="dict_get_value">
+            <value name="KEY">
+                <shadow type="text">
+                    <field name="TEXT">key</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="dict_set_value">
+            <value name="KEY">
+                <shadow type="text">
+                    <field name="TEXT">key</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="dict_get_all_keys"></block>
+        <block type="dict_key_exist">
+            <value name="KEY">
+                <shadow type="text">
+                    <field name="TEXT">key</field>
+                </shadow>
+            </value>
+        </block>
+    </category>
     
     <sep></sep>
     
@@ -328,6 +364,11 @@ BLOCKLY_TOOLBOX_XML['standard'] = `
     </category>
 </xml>
 `;
+
+
+/* <category id="catDict" colour="#2C5D6F" name="Dict">
+    <block type="vector_constructor"></block>
+</category> */
 
 
 // <category name="File I/O" colour="185"></category>

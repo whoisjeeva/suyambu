@@ -101,25 +101,28 @@ class ElementFinder {
         return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
     }
 
-    createXpath(el) {
-        if (el.id !== '') {
-            return 'id("' + el.id + '")'
-        }
-        if (el === document.body) {
-            return el.tagName
-        }
-
+    createSingleXpath(el) {
         var ix = 0
         var siblings = el.parentNode.childNodes
         for (var i = 0; i < siblings.length; i++) {
             var sibling = siblings[i]
             if (sibling === el) {
-                return this.createXpath(el.parentNode) + '/' + el.tagName + '[' + (ix + 1) + ']'
+                return el.tagName + '[' + (ix + 1) + ']'
             }
             if (sibling.nodeType === 1 && sibling.tagName === el.tagName) {
                 ix++
             }
         }
+    }
+
+    createXpath(el) {
+        let xpath = this.createSingleXpath(el);
+        let parent = el.parentNode;
+        while (parent.tagName !== 'BODY') {
+            xpath = this.createSingleXpath(parent) + '/' + xpath;
+            parent = parent.parentNode;
+        }
+        return "/html/body/" + xpath.toLowerCase();
     }
 
     findSimilar(currentEl) {

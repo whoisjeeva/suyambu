@@ -54,9 +54,12 @@ function getTheme() {
     return lightTheme
 }
 
-
+let mediaPath = "media/"
+if (window.isExtension) {
+    mediaPath = '/piper/static/media/'
+}
 window.workspace = Blockly.inject('blockly-div', {
-    media: '/piper/static/media/',
+    media: mediaPath,
     toolbox: BLOCKLY_TOOLBOX_XML['standard'],
     zoom: {controls: true},
     move: {
@@ -96,20 +99,20 @@ Blockly.JavaScript.workspaceToCode = function(workspace) {
     return code
 }
 
-// setTimeout(() => {
-//     try {
-//         window.Gumify.stack = JSON.parse(localStorage.getItem("variableStack"))
-//     } catch(e) {
-//         window.Gumify.stack = {}
-//     }
-
-//     try {
-//         Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(localStorage.getItem("xml")), workspace)
-//         if (!window.isExtension) {
-//             localStorage.setItem("xml", null)
-//         }
-//     } catch(e) {}
-// }, 500)
+if (!window.isExtension) {
+    setTimeout(() => {
+        try {
+            window.Gumify.stack = JSON.parse(localStorage.getItem("variableStack"))
+        } catch(e) {
+            window.Gumify.stack = {}
+        }
+    
+        try {
+            Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(localStorage.getItem("xml")), workspace)
+            localStorage.setItem("xml", null)
+        } catch(e) {}
+    }, 500)
+}
 
 let isToolbarToggleVisible = localStorage.getItem("isToolbarToggleVisible") === "true"
 workspace.addChangeListener(function(e) {

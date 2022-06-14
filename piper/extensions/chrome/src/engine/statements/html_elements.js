@@ -1,4 +1,4 @@
-import { stringify } from "../util"
+import { xpathToCssSelectorInjector } from "../util"
 
 
 export default async function(statement, onError) {
@@ -11,6 +11,7 @@ export default async function(statement, onError) {
             } else {
                 xpath = "null"
             }
+
             els.push({
                 selector: el.selector,
                 elIndex: el.elIndex,
@@ -19,6 +20,11 @@ export default async function(statement, onError) {
 
             let tab = await this.browser.getCurrentTab()
             if (el.isFindSimilar) {
+                await chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    func: xpathToCssSelectorInjector,
+                    world: "MAIN"
+                })
                 await chrome.scripting.executeScript(
                     {
                         target: { tabId: tab.id },
@@ -30,13 +36,23 @@ export default async function(statement, onError) {
                     target: { tabId: tab.id },
                     func: (selector, elIndex, xpath) => {
                         let currentEl = document.querySelectorAll(selector)[elIndex]
+                        let isXpath = false
+                        let xpathSelector = null
                         if (currentEl === undefined) {
                             currentEl = window.elementFinder.getElementByXpath(xpath)
+                            if (currentEl) {
+                                isXpath = true
+                                xpathSelector = cssify(xpath)
+                            }
                         }
                         if (currentEl) {
                             currentEl.style.boxShadow = "0 0 0 2px red"
                             let tree = window.elementFinder.findTree(currentEl)
-                            return window.elementFinder.findSimilar(currentEl, tree)
+                            let sims = window.elementFinder.findSimilar(currentEl, tree)
+                            if (isXpath) {
+                                sims[0].selector = xpathSelector
+                            }
+                            return sims
                         }
                         return []
                     },
@@ -53,6 +69,8 @@ export default async function(statement, onError) {
                 }
             }
         }
+
+        console.log(els)
 
         return els
     } catch (e) {

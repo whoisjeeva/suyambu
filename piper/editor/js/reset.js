@@ -69,7 +69,9 @@ $(".blocklyTreeRow .blocklyTreeIcon").each(el => {
 	} else if (label === "Text") {
 		icon.textContent = "text_fields"
 	} else if (label === "Lists") {
-		icon.textContent = "list"
+		icon.textContent = "data_array"
+	} else if (label === "Dict") {
+		icon.textContent = "data_object"
 	} else if (label === "Variables") {
 		icon.textContent = "inventory"
 	} else if (label === "Functions") {

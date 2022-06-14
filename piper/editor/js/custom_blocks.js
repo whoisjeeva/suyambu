@@ -17,11 +17,32 @@ Blockly.JavaScript['go_to_website'] = function(block) {
     return JSON.stringify(code) + ","
 }
 
+// Blockly.Blocks['download_from_url'] = {
+//     init: function() {
+//         this.appendValueInput("URL")
+//             .setCheck("String")
+//             .appendField("download from url")
+//         this.setPreviousStatement(true, null)
+//         this.setNextStatement(true, null)
+//         this.setColour("#E82634")
+//         this.setTooltip("Trigger download of a file from a URL")
+//         this.setHelpUrl("")
+//     }
+// }
+
+// Blockly.JavaScript['download_from_url'] = function(block) {
+//     var url = Blockly.JavaScript.valueToCode(block, 'URL', Blockly.JavaScript.ORDER_NONE)
+//     var code = { cmd: "download_from_url", pointer: url }
+//     return JSON.stringify(code) + ","
+// }
+
+
 Blockly.Blocks['download_from_url'] = {
     init: function() {
         this.appendValueInput("URL")
-            .setCheck("String")
-            .appendField("download from url")
+            .setCheck(null)
+            .appendField("download from")
+            .appendField(new Blockly.FieldDropdown([["url","URL"], ["content","CONTENT"]]), "OP");
         this.setPreviousStatement(true, null)
         this.setNextStatement(true, null)
         this.setColour("#E82634")
@@ -30,11 +51,15 @@ Blockly.Blocks['download_from_url'] = {
     }
 }
 
+
 Blockly.JavaScript['download_from_url'] = function(block) {
-    var url = Blockly.JavaScript.valueToCode(block, 'URL', Blockly.JavaScript.ORDER_NONE)
-    var code = { cmd: "download_from_url", pointer: url }
+    var op = block.getFieldValue('OP')
+    var input = Blockly.JavaScript.valueToCode(block, 'URL', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "download_from_url", pointer: { op: op, input: input } }
     return JSON.stringify(code) + ","
 }
+
+
 
 Blockly.Blocks['set_user_agent'] = {
     init: function() {
@@ -799,7 +824,6 @@ Blockly.JavaScript['prompt'] = function(block) {
 
 
 /* Lists */ 
-
 Blockly.JavaScript["lists_create_with"] = function(block) {
     let items = []
     for (let i = 0; i < block.itemCount_; i++) {
@@ -915,6 +939,176 @@ Blockly.JavaScript["lists_sort"] = function(block) {
     let type = block.getFieldValue("TYPE")
     return [JSON.stringify({ cmd: "lists_sort", pointer: { list: list, direction: direction, type: type } }), Blockly.JavaScript.ORDER_NONE]
 }
+
+
+/* Dict */
+// console.log(String(Blockly.Blocks['lists_create_with'].updateShape_))
+// console.log(Blockly.Blocks['lists_create_with'])
+
+Blockly.Blocks["dict_create_with"] = Object.assign({}, Blockly.Blocks["lists_create_with"])
+Blockly.Blocks["dict_create_with"].init = function() {
+	// this.setHelpUrl(Blockly.Msg.LISTS_CREATE_WITH_HELPURL);
+	this.setStyle("list_blocks");
+	this.itemCount_ = 3;
+	this.updateShape_();
+	this.setOutput(true, "Dict");
+	this.setMutator(new Blockly.Mutator(["lists_create_with_item"]));
+	// this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP)
+    this.setColour("#2C5D6F")
+}
+Blockly.Blocks["dict_create_with"].updateShape_ = function() {
+	this.itemCount_ && this.getInput("EMPTY") ? this.removeInput("EMPTY") : this.itemCount_ || this.getInput("EMPTY") ||
+		this.appendDummyInput("EMPTY").appendField("create empty dictionary");
+	for (var a = 0; a < this.itemCount_; a++)
+		if (!this.getInput("ADD" + a)) {
+			var b = this.appendValueInput("ADD" + a).setAlign(Blockly.ALIGN_RIGHT).setCheck("Pair");
+			0 == a && b.appendField("create dictionary with")
+		} for (; this.getInput("ADD" + a);) this.removeInput("ADD" + a), a++;
+}
+
+
+Blockly.JavaScript["dict_create_with"] = function(block) {
+    let items = []
+    for (let i = 0; i < block.itemCount_; i++) {
+        let item = Blockly.JavaScript.valueToCode(block, "ADD" + i, Blockly.JavaScript.ORDER_NONE) || { cmd: "dict_pair", pointer: { key: { cmd: "logic_null", pointer: null }, value: { cmd: "logic_null", pointer: null } } }
+        items.push(item)
+    }
+    return [JSON.stringify({ cmd: "dict_create_with", pointer: items }), Blockly.JavaScript.ORDER_NONE]
+}
+
+
+
+Blockly.Blocks['dict_pair'] = {
+    init: function() {
+        this.appendValueInput("KEY")
+            .setCheck("String")
+            .appendField("key")
+        this.appendValueInput("VALUE")
+            .setCheck(null)
+            .appendField("value")
+        this.setInputsInline(true)
+        this.setOutput(true, "Pair")
+        this.setColour("#2C5D6F")
+        this.setTooltip("")
+        this.setHelpUrl("")
+    }
+}
+
+
+
+Blockly.JavaScript['dict_pair'] = function(block) {
+    var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_NONE)
+    var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "dict_pair", pointer: { key: key, value: value } }
+    return [JSON.stringify(code), Blockly.JavaScript.ORDER_NONE]
+}
+
+
+
+Blockly.Blocks['dict_get_value'] = {
+    init: function() {
+        this.appendValueInput("KEY")
+            .setCheck("String")
+            .appendField("get")
+        this.appendValueInput("DICT")
+            .setCheck("Dict")
+            .appendField("from dict")
+        this.setInputsInline(true)
+        this.setOutput(true, null)
+        this.setColour("#2C5D6F")
+        this.setTooltip("")
+        this.setHelpUrl("")
+    }
+}
+
+
+Blockly.JavaScript['dict_get_value'] = function(block) {
+    var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_NONE)
+    var dict = Blockly.JavaScript.valueToCode(block, 'DICT', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "dict_get_value", pointer: { key: key, dict: dict } }
+    return [JSON.stringify(code), Blockly.JavaScript.ORDER_NONE]
+}
+
+
+Blockly.Blocks['dict_set_value'] = {
+    init: function() {
+        this.appendValueInput("DICT")
+            .setCheck("Dict")
+            .appendField("in dict")
+        this.appendValueInput("KEY")
+            .setCheck("String")
+            .appendField("set key")
+        this.appendValueInput("VALUE")
+            .setCheck(null)
+            .appendField("value")
+        this.setInputsInline(true)
+        this.setPreviousStatement(true, null)
+        this.setNextStatement(true, null)
+        this.setColour("#2C5D6F")
+        this.setTooltip("")
+        this.setHelpUrl("")
+    }
+}
+
+
+Blockly.JavaScript['dict_set_value'] = function(block) {
+    var dict = Blockly.JavaScript.valueToCode(block, 'DICT', Blockly.JavaScript.ORDER_NONE)
+    var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_NONE)
+    var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "dict_set_value", pointer: { dict: dict, key: key, value: value } }
+    return JSON.stringify(code) + ","
+}
+
+
+Blockly.Blocks['dict_get_all_keys'] = {
+    init: function() {
+        this.appendValueInput("DICT")
+            .setCheck("Dict")
+            .appendField("in dict")
+        this.appendDummyInput()
+            .appendField("get all keys")
+        this.setInputsInline(true)
+        this.setOutput(true, "Array")
+        this.setColour("#2C5D6F")
+        this.setTooltip("")
+        this.setHelpUrl("")
+    }
+}
+
+
+Blockly.JavaScript['dict_get_all_keys'] = function(block) {
+    var dict = Blockly.JavaScript.valueToCode(block, 'DICT', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "dict_get_all_keys", pointer: dict }
+    return [JSON.stringify(code), Blockly.JavaScript.ORDER_NONE]
+}
+
+
+Blockly.Blocks['dict_key_exist'] = {
+    init: function() {
+        this.appendValueInput("DICT")
+            .setCheck("Dict")
+            .appendField("in dict")
+        this.appendValueInput("KEY")
+            .setCheck("String")
+            .appendField("key")
+        this.appendDummyInput()
+            .appendField("exist?")
+        this.setInputsInline(true)
+        this.setOutput(true, "Boolean")
+        this.setColour("#2C5D6F")
+        this.setTooltip("")
+        this.setHelpUrl("")
+    }
+}
+
+
+Blockly.JavaScript['dict_key_exist'] = function(block) {
+    var dict = Blockly.JavaScript.valueToCode(block, 'DICT', Blockly.JavaScript.ORDER_NONE)
+    var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_NONE)
+    var code = { cmd: "dict_key_exist", pointer: { dict: dict, key: key } }
+    return [JSON.stringify(code), Blockly.JavaScript.ORDER_NONE]
+}
+
 
 
 /* Variable */ 

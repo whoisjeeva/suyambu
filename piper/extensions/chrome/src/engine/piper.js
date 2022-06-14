@@ -74,12 +74,27 @@ import lists_split from "./statements/lists_split"
 import lists_regex from "./statements/lists_regex"
 import lists_sort from "./statements/lists_sort"
 
+import dict_create_with from "./statements/dict_create_with"
+import dict_pair from "./statements/dict_pair"
+import dict_get_value from "./statements/dict_get_value"
+import dict_set_value from "./statements/dict_set_value"
+import dict_get_all_keys from "./statements/dict_get_all_keys"
+import dict_key_exist from "./statements/dict_key_exist"
+
 import variables_set from "./statements/variables_set"
 import variables_get from "./statements/variables_get"
 import math_change from "./statements/math_change"
 
 import procedures_defnoreturn from "./statements/procedures_defnoreturn"
 import procedures_defreturn from "./statements/procedures_defreturn"
+import procedures_callnoreturn from "./statements/procedures_callnoreturn"
+import procedures_ifreturn from "./statements/procedures_ifreturn"
+import procedures_callreturn from "./statements/procedures_callreturn"
+
+import utils_tryCatch from "./statements/utils_tryCatch"
+
+
+import { sleep } from "./util"
 
 
 class Piper {
@@ -102,17 +117,21 @@ class Piper {
         })
     }
 
-    async showError(statement, error) {
+    showError(statement, error) {
         if (this.canShowErrorAlert) {
-            let tab = await this.browser.getCurrentTab()
-            await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: e => {
-                    return alert(e)
-                },
-                args: [String(error)],
-                world: "MAIN"
-            })
+            (async () => {
+                try {
+                    let tab = await this.browser.getCurrentTab()
+                    await chrome.scripting.executeScript({
+                        target: { tabId: tab.id },
+                        func: e => {
+                            return alert(e)
+                        },
+                        args: [String(error)],
+                        world: "MAIN"
+                    })
+                } catch(e) {}
+            })()
         }
         this.isTerminated = true
     }
@@ -134,6 +153,14 @@ class Piper {
             await this.execute(code)
         }
         await this.onScriptComplete()
+    }
+
+    findFunction(name) {
+        if (!name) return null
+        for (let f of this.FUNCTION_STACK) {
+            if (f.name === name) return f
+        }
+        return null
     }
 
     async initFunctions(code) {
@@ -185,7 +212,7 @@ class Piper {
             return statement
         }
 
-        console.log(statement)
+        // console.log(statement)
 
         switch (statement.cmd) {
 
@@ -353,6 +380,21 @@ class Piper {
                 return await lists_sort.call(this, statement, e => { this.showError(statement, e) })
 
 
+            // Dict
+            case "dict_create_with":
+                return await dict_create_with.call(this, statement, e => { this.showError(statement, e) })
+            case "dict_pair":
+                return await dict_pair.call(this, statement, e => { this.showError(statement, e) })
+            case "dict_get_value":
+                return await dict_get_value.call(this, statement, e => { this.showError(statement, e) })
+            case "dict_set_value":
+                return await dict_set_value.call(this, statement, e => { this.showError(statement, e) })
+            case "dict_get_all_keys":
+                return await dict_get_all_keys.call(this, statement, e => { this.showError(statement, e) })
+            case "dict_key_exist":
+                return await dict_key_exist.call(this, statement, e => { this.showError(statement, e) })
+
+
             // Variables
             case "variables_set":
                 return await variables_set.call(this, statement, e => { this.showError(statement, e) })
@@ -360,6 +402,20 @@ class Piper {
                 return await variables_get.call(this, statement, e => { this.showError(statement, e) })
             case "math_change":
                 return await math_change.call(this, statement, e => { this.showError(statement, e) })
+
+
+            // Functions
+            case "procedures_callnoreturn":
+                return await procedures_callnoreturn.call(this, statement, e => { this.showError(statement, e) })
+            case "procedures_ifreturn":
+                return await procedures_ifreturn.call(this, statement, e => { this.showError(statement, e) })
+            case "procedures_callreturn":
+                return await procedures_callreturn.call(this, statement, e => { this.showError(statement, e) })
+
+
+            // Utils
+            case "utils_tryCatch":
+                return await utils_tryCatch.call(this, statement, e => { this.showError(statement, e) })
 
 
             default:

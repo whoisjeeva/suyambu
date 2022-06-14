@@ -1,10 +1,10 @@
 import { stringify } from "../util"
+import procedures_callnoreturn from "./procedures_callnoreturn"
 
 
 export default async function(statement, onError) {
     try {
-        await this.browser.createNewWindow()
-        await this.browser.newTab()
+        return await procedures_callnoreturn(statement, onError)
     } catch (e) {
         onError(e)
     }

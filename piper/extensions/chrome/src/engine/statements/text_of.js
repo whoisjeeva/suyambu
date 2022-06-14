@@ -18,7 +18,6 @@ async function waitForElement(tabId, el, tries = 0) {
         return false
     }
     if (!els) {
-        await sleep(1000)
         return waitForElement.call(this, tabId, el, tries + 1)
     }
     return true
@@ -31,6 +30,10 @@ export default async function(statement, onError) {
         let els = await this.executeStatement(stringify(pointer.elements))
         if (!(els instanceof Array)) {
             els = [els]
+        }
+
+        if (els.length === 0) {
+            throw new Error("No elements found")
         }
 
         let op = pointer.op
@@ -51,6 +54,7 @@ export default async function(statement, onError) {
                     await waitForElement.call(this, tab.id, el)
                 }
         }
+
 
         for (let el of els) {
             let xpath = el.attrs.xpath || "null"
@@ -81,7 +85,6 @@ export default async function(statement, onError) {
                 return texts
         }
     } catch (e) {
-        console.log(e)
         onError(e)
         return null
     }

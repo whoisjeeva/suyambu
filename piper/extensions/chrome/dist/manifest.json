@@ -1,10 +1,9 @@
 {
 	"manifest_version": 3,
-	"name": "Piper",
-	"version": "1.0.1",
+	"name": "Piper: Web Automation Toolkit",
+	"version": "1.0.18",
 	"permissions": [
 		"storage",
-		"notifications",
 		"tabs",
 		"scripting",
 		"downloads",
@@ -37,7 +36,7 @@
 		"default_title": "Piper",
 		"default_popup": "popup.html"
 	},
-	"description": "A plain text description",
+	"description": "Web automation toolkit",
 	"icons": {
 		"16": "icons/16.png",
 		"48": "icons/48.png",
@@ -49,17 +48,17 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["http://localhost/*"],
+			"matches": ["https://www.suyambu.net/piper/*", "http://localhost:3000/piper/*"],
 			"js": ["content_script.js"],
 			"run_at": "document_idle"
 		},
 		{
 			"matches": ["http://*/*"],
-			"js": ["unfocus.js"],
+			"js": ["wakeup.js"],
 			"run_at": "document_start"
 		}
 	],
 	"externally_connectable": {
-		"matches": ["http://localhost/*"]
+		"matches": ["https://www.suyambu.net/piper/*", "http://localhost:3000/piper/*"]
 	}
 }

@@ -11,7 +11,7 @@ export default async function(statement, onError) {
             func: value => {
                 return alert(value)
             },
-            args: [value],
+            args: [stringify(value)],
             world: "MAIN"
         })
     } catch (e) {
